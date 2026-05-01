@@ -12,7 +12,7 @@ class NoteListCreateView(generics.ListCreateAPIView):
         return Note.objects.filter(user=user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        return serializer.save(user=self.request.user)
 
 
 class NoteDetailView(generics.RetrieveUpdateDestroyAPIView):
