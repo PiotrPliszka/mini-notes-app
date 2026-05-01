@@ -56,7 +56,7 @@ Tooling:
 ## Najwazniejsze funkcje
 
 - rejestracja konta
-- logowanie i wylogowanie
+- logowanie i odswiezanie tokena
 - pobranie danych aktualnie zalogowanego uzytkownika
 - dashboard z lista notatek
 - tworzenie notatek
@@ -78,7 +78,7 @@ Tooling:
 Przykladowe endpointy:
 - `POST /api/auth/register/`
 - `POST /api/auth/login/`
-- `POST /api/auth/logout/`
+- `POST /api/auth/refresh/`
 - `GET /api/auth/me/`
 - `GET /api/notes/`
 - `GET /api/notes/<id>/`
@@ -98,8 +98,24 @@ Przykladowe endpointy:
 Na koniec projekt powinien dzialac tak:
 - nowy uzytkownik rejestruje konto
 - loguje sie do aplikacji
+- moze odswiezyc token bez ponownego logowania
 - przechodzi do chronionego dashboardu
 - zarzadza swoimi notatkami
 - nie ma dostepu do notatek innych uzytkownikow
 
 To projekt nastawiony na nauke dobrych podstaw, a nie na ilosc funkcji.
+
+## Aktualny status
+
+Na ten moment backend jest juz w duzej czesci gotowy:
+- custom `User`
+- model `Note`
+- `register`
+- `login`
+- `refresh`
+- `me`
+- CRUD notatek z filtrowaniem po zalogowanym userze
+
+Najblizszy krok:
+- domkniecie testow backendu
+- potem frontend auth i frontend notes
