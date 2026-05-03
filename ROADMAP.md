@@ -46,7 +46,7 @@ Tooling:
 
 To jest stan faktyczny kodu na teraz.
 
-Backend juz jest zrobiony w duzej czesci:
+Backend jest juz w bardzo duzej czesci gotowy:
 - projekt `Django` z katalogiem `config`
 - aplikacje `users` i `notes`
 - custom `User` oparty o `AbstractUser`
@@ -62,6 +62,8 @@ Backend juz jest zrobiony w duzej czesci:
 - lista notatek zalogowanego usera
 - tworzenie notatki przypisanej do `request.user`
 - pobieranie, edycja i usuwanie tylko swoich notatek
+- testy auth w `users/tests.py`
+- testy notes w `notes/tests.py`
 
 Frontend jest jeszcze praktycznie nieruszony od strony logiki auth i notes.
 
@@ -151,32 +153,36 @@ Masz juz ogarniete:
 - dlaczego `confirm_password` jest tylko w serializerze
 - dlaczego test jednego endpointu nie powinien zalezec od innego endpointu, jesli nie musi
 
-## 9. Co jest jeszcze do zrobienia w backendzie
+## 9. Backend testy i stan domkniecia
 
-Backend nie jest jeszcze domkniety w 100%, bo brakuje:
-- porzadnych testow automatycznych
-- ewentualnego drobnego sprzatania importow i struktury
-
-Najblizsze backendowe zadania:
+Na ten moment backend ma juz przygotowane podstawowe testy automatyczne.
 
 ### Auth tests
 
-Do napisania:
+Masz juz napisane:
 - `test_create_account`
 - `test_login`
+- `test_me`
 - `test_refresh`
-- `test_me_requires_auth`
-- `test_me_returns_current_user`
 
 ### Notes tests
 
-Do napisania:
+Masz juz napisane:
 - lista notatek wymaga auth
+- tworzenie notatki wymaga auth
 - user widzi tylko swoje notatki
 - tworzenie notatki przypisuje `request.user`
+- user moze pobrac swoja notatke
 - user nie moze pobrac cudzej notatki
+- user moze edytowac swoja notatke
 - user nie moze edytowac cudzej notatki
+- user moze usunac swoja notatke
 - user nie moze usunac cudzej notatki
+
+Co jeszcze mozna dopracowac:
+- uruchomic pelny `manage.py test`
+- ewentualnie dodac testy walidacji, np. dla zbyt krotkiego `title`
+- ewentualnie lekko posprzatac pliki testowe
 
 ## 10. Jak myslec o testach
 
@@ -198,7 +204,7 @@ Najprostszy model myslenia:
 
 ## 11. Co dalej po backendzie
 
-Po domknieciu testow backendu:
+Po backendzie:
 
 1. frontend auth
 - strona `Register`
@@ -232,7 +238,7 @@ Planowany minimalny zestaw:
 
 Najlepsza kolejnosc od teraz:
 
-1. domknac testy backendu
+1. uruchomic pelny backend test suite
 2. upewnic sie, ze auth i notes sa stabilne
 3. przejsc do frontendu auth
 4. przejsc do frontendu notes
@@ -259,8 +265,9 @@ Najlepsza kolejnosc od teraz:
 - [x] zrobic `PUT /api/notes/<id>/`
 - [x] zrobic `DELETE /api/notes/<id>/`
 - [x] sprawdzic backend recznie przez Thunder Client
-- [ ] domknac testy automatyczne auth
-- [ ] domknac testy automatyczne notes
+- [x] napisac podstawowe testy automatyczne auth
+- [x] napisac podstawowe testy automatyczne notes
+- [ ] uruchomic pelny backend test suite i potwierdzic wszystko razem
 - [ ] zaczac frontend auth
 - [ ] zrobic frontend notes
 - [ ] dopracowac UX
@@ -281,6 +288,7 @@ Projekt bedzie sensownie domkniety, kiedy:
 Na ten moment nie potrzebujesz juz rozbudowywac backendu o nowe ficzery.
 
 Najbardziej sensowny krok:
-- nauczyc sie testow na tym, co juz zrobiles
+- potwierdzic caly backend jednym pelnym runem testow
+- potem przejsc do frontendu auth
 
-To domknie backend i da Ci mocny fundament pod frontend.
+To zamknie backend na sensownym poziomie i da Ci mocny fundament pod frontend.

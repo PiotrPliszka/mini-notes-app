@@ -107,7 +107,7 @@ To projekt nastawiony na nauke dobrych podstaw, a nie na ilosc funkcji.
 
 ## Aktualny status
 
-Na ten moment backend jest juz w duzej czesci gotowy:
+Na ten moment backend jest praktycznie domkniety na poziomie podstawowej funkcjonalnosci:
 - custom `User`
 - model `Note`
 - `register`
@@ -115,7 +115,10 @@ Na ten moment backend jest juz w duzej czesci gotowy:
 - `refresh`
 - `me`
 - CRUD notatek z filtrowaniem po zalogowanym userze
+- testy `users`
+- testy `notes`
 
 Najblizszy krok:
-- domkniecie testow backendu
-- potem frontend auth i frontend notes
+- uruchomic pelny backend test suite i potwierdzic wszystko razem
+- przejsc do frontendu auth
+- potem frontend notes
