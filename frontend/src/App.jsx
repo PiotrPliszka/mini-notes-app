@@ -4,7 +4,6 @@ import { HomePage } from "./pages/HomePage.jsx";
 import { LoginPage } from "./pages/LoginPage.jsx";
 import { RegisterPage } from "./pages/RegisterPage.jsx";
 import { Dashboard } from "./pages/Dashboard.jsx";
-import "./App.css";
 
 function App() {
   return (

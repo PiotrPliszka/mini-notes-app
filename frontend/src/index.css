@@ -1,11 +1,53 @@
+:root {
+  --color-bg-page: rgb(245, 240, 225);
+  --color-surface: rgb(250, 250, 245);
+  --color-surface-muted: rgb(241, 238, 231);
+  --color-surface-white: rgb(255, 255, 255);
+
+  --color-text-strong: rgb(21, 42, 37);
+  --color-text-body: rgb(54, 58, 52);
+  --color-text-muted: rgb(84, 88, 83);
+  --color-text-label: rgb(126, 96, 71);
+  --color-text-inverse: rgb(255, 255, 255);
+
+  --color-accent: rgb(18, 41, 35);
+  --color-accent-hover: rgb(25, 54, 46);
+  --color-accent-contrast: rgb(255, 255, 255);
+  --color-outline-soft: rgba(18, 41, 35, 0.2);
+
+  --shadow-soft: 0 24px 60px rgba(45, 51, 43, 0.08);
+  --shadow-card: 0 8px 18px rgba(32, 36, 29, 0.04);
+  --shadow-button: 0 10px 24px rgba(18, 41, 35, 0.16);
+
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 2rem;
+  --radius-xl: 1.5rem;
+  --radius-pill: 999px;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 2rem;
+  --space-8: 3rem;
+}
+
 html {
   scroll-behavior: smooth;
+  background-color: var(--color-bg-page);
 }
 
 body {
   min-width: 320px;
+  margin: 0;
 }
 
 #root {
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
