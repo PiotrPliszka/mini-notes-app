@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import "./RegisterPage.css";
 
 export function RegisterPage() {
@@ -10,12 +10,22 @@ export function RegisterPage() {
         <h1 className="about-app">Regitser or log in without friction</h1>
       </div>
       <div className="buttons-div">
-        <Link to="/register" className="register-btn">
+        <NavLink
+          to="/register"
+          className={({ isActive }) =>
+            `register-btn ${isActive ? "auth-btn-active" : "auth-btn-inactive"}`
+          }
+        >
           Register
-        </Link>
-        <Link to="/login" className="login-btn">
+        </NavLink>
+        <NavLink
+          to="/login"
+          className={({ isActive }) =>
+            `login-btn ${isActive ? "auth-btn-active" : "auth-btn-inactive"}`
+          }
+        >
           Login
-        </Link>
+        </NavLink>
       </div>
       <div className="form-div">
         <form>

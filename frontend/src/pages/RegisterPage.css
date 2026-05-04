@@ -57,12 +57,12 @@
     color 0.2s ease;
 }
 
-.register-btn {
+.auth-btn-active {
   background-color: var(--color-accent);
   color: var(--color-accent-contrast);
 }
 
-.login-btn {
+.auth-btn-inactive {
   background-color: var(--color-surface-muted);
   color: var(--color-text-body);
 }
