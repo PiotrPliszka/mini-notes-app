@@ -16,6 +16,23 @@
   gap: var(--space-4);
 }
 
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.home-icon {
+  background-color: var(--color-bg-page);
+  border-radius: 1rem;
+  padding: 0.5rem;
+  transition: box-shadow ease-in 0.3s;
+}
+
+.home-icon:hover {
+  box-shadow: var(--shadow-button);
+}
+
 .mini-title {
   margin: 0;
   font-size: 0.75rem;

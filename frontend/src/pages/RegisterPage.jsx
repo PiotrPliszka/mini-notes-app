@@ -1,12 +1,18 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
+import icon from "../assets/house.svg";
 import "./RegisterPage.css";
 
 export function RegisterPage() {
   return (
     <div className="main-container">
       <div className="title-div">
-        <p className="mini-title">Auth</p>
+        <div className="top-bar">
+          <p className="mini-title">Auth</p>
+          <Link to="/">
+            <img src={icon} alt="Home" className="home-icon" />
+          </Link>
+        </div>
         <h1 className="about-app">Regitser or log in without friction</h1>
       </div>
       <div className="buttons-div">
