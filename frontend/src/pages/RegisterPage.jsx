@@ -1,9 +1,37 @@
 import React from "react";
-import { NavLink, Link } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, Link, useNavigate } from "react-router-dom";
+import api from "../api/axios";
 import icon from "../assets/house.svg";
 import "./RegisterPage.css";
 
 export function RegisterPage() {
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirm_password: "",
+  });
+  function handleChange(e) {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  }
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      const response = await api.post("auth/register/", user);
+      console.log("Sukces", response.data);
+      navigate("/dashboard");
+    } catch (error) {
+      if (error.response) {
+        console.error("Error data: ", error.response.data);
+      } else {
+        console.error("Error message: ", error.message);
+      }
+    }
+  }
+
   return (
     <div className="main-container">
       <div className="title-div">
@@ -34,15 +62,35 @@ export function RegisterPage() {
         </NavLink>
       </div>
       <div className="form-div">
-        <form>
+        <form onSubmit={handleSubmit}>
           <label>Username</label>
-          <input type="text" />
+          <input
+            type="text"
+            name="username"
+            value={user.username}
+            onChange={handleChange}
+          />
           <label>Email</label>
-          <input type="text" />
+          <input
+            type="email"
+            name="email"
+            value={user.email}
+            onChange={handleChange}
+          />
           <label>Password</label>
-          <input type="text" />
+          <input
+            type="password"
+            name="password"
+            value={user.password}
+            onChange={handleChange}
+          />
           <label>Confrim Password</label>
-          <input type="text" />
+          <input
+            type="password"
+            name="confirm_password"
+            value={user.confirm_password}
+            onChange={handleChange}
+          />
           <button type="submit">Start Writing</button>
         </form>
       </div>
