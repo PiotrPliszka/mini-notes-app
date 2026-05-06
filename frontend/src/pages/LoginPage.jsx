@@ -1,9 +1,35 @@
-import React from "react";
-import { NavLink, Link } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import icon from "../assets/house.svg";
+import api from "../api/axios";
 import "./LoginPage.css";
+import { useAuth } from "../context/AuthContext";
 
 export function LoginPage() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState({ username: "", password: "" });
+  const { login } = useAuth();
+  function handleChange(e) {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      const response = await api.post("auth/login/", user);
+      const { access, refresh } = response.data;
+      login(access, refresh);
+      navigate("/dashboard");
+      console.log("Succes: ", response.data);
+    } catch (error) {
+      if (error.response) {
+        console.log("Error data: ", error.response.data);
+      } else {
+        console.log("Error message: ", error.message);
+      }
+    }
+  }
+
   return (
     <div className="main-container">
       <div className="title-div">
@@ -34,11 +60,21 @@ export function LoginPage() {
         </NavLink>
       </div>
       <div className="form-div">
-        <form>
+        <form onSubmit={handleSubmit}>
           <label>Username</label>
-          <input type="text" />
+          <input
+            type="text"
+            name="username"
+            value={user.username}
+            onChange={handleChange}
+          />
           <label>Password</label>
-          <input type="text" />
+          <input
+            type="password"
+            name="password"
+            value={user.password}
+            onChange={handleChange}
+          />
           <button type="submit">Start Writing</button>
         </form>
       </div>
