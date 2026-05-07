@@ -4,12 +4,31 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext";
+import { Toaster } from "react-hot-toast";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
         <App />
+        <Toaster
+          position="top-right"
+          gutter={10}
+          toastOptions={{
+            duration: 2800,
+            className: "app-toast",
+            success: {
+              className: "app-toast app-toast-success",
+              iconTheme: {
+                primary: "rgb(18, 41, 35)",
+                secondary: "rgb(255, 255, 255)",
+              },
+            },
+            error: {
+              className: "app-toast app-toast-error",
+            },
+          }}
+        />
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,

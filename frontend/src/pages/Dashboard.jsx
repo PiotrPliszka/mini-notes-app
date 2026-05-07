@@ -4,6 +4,7 @@ import "./Dashboard.css";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 import { formatDate } from "../components/FormatDate";
+import toast from "react-hot-toast";
 
 export function Dashboard() {
   // const demoNotes = [
@@ -149,6 +150,8 @@ export function Dashboard() {
       } else {
         console.error("Error message: ", error.message);
       }
+    } finally {
+      toast.success("Succesfully deleted");
     }
   }
 
