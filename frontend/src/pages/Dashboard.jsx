@@ -4,7 +4,6 @@ import "./Dashboard.css";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 import { formatDate } from "../components/FormatDate";
-import { use } from "react";
 
 export function Dashboard() {
   // const demoNotes = [
@@ -83,6 +82,8 @@ export function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState({ username: "", email: "" });
   const [notes, setNotes] = useState([]);
+  const [noteToDelete, setNoteToDelete] = useState(null);
+  const noteNameToBeDeleted = notes.find((movie) => movie.id === noteToDelete);
 
   useEffect(() => {
     const getUser = async () => {
@@ -151,6 +152,17 @@ export function Dashboard() {
     }
   }
 
+  function handleConfirmDelete() {
+    if (noteToDelete) {
+      noteDelete(noteToDelete);
+      setNoteToDelete(null);
+    }
+  }
+
+  function handleCancelDelete() {
+    setNoteToDelete(null);
+  }
+
   return (
     <div className="dashboard-page">
       <div className="dashboard-sidebar">
@@ -192,7 +204,7 @@ export function Dashboard() {
                     className="dashboard-note-action-btn"
                     onClick={(e) => {
                       e.preventDefault();
-                      noteDelete(note.id);
+                      setNoteToDelete(note.id);
                     }}
                   >
                     Delete
@@ -202,6 +214,24 @@ export function Dashboard() {
             </article>
           ))}
         </div>
+        {noteToDelete && (
+          <div className="dialog-overlay">
+            <div className="dialog-box">
+              <h3>
+                Are you sure you want to delete "{noteNameToBeDeleted.title}"?
+              </h3>
+              <p>This action cannot be undone</p>
+            </div>
+            <div className="dialog-actions">
+              <button className="cancel-btn" onClick={handleCancelDelete}>
+                Cancel
+              </button>
+              <button className="confirm-del-btn" onClick={handleConfirmDelete}>
+                Yes, delete
+              </button>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
