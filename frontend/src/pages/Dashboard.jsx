@@ -7,84 +7,17 @@ import { formatDate } from "../components/FormatDate";
 import toast from "react-hot-toast";
 
 export function Dashboard() {
-  // const demoNotes = [
-  //   {
-  //     id: 1,
-  //     title: "Zrozumieć Django Auth",
-  //     preview:
-  //       "Kluczowe założenia do rejestracji i logowania użytkownika. Trzeba pamiętać o odpowiednim zabezpieczeniu endpointów...",
-  //     date: "06 Maj 2026",
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Struktura danych",
-  //     preview:
-  //       "Relacja User -> Note jest niezbędna do prawidłowego filtrowania.",
-  //     date: "05 Maj 2026",
-  //   },
-  //   {
-  //     id: 3,
-  //     title: "Deployment checklist",
-  //     preview:
-  //       "Sprawdzenie zmiennych środowiskowych, migracji, backupu bazy i monitoringu po wdrożeniu produkcyjnym.",
-  //     date: "04 Maj 2026",
-  //   },
-  //   {
-  //     id: 4,
-  //     title: "Pomysły na UX",
-  //     preview:
-  //       "Dodanie szybkich akcji na karcie notatki, skrótów klawiaturowych oraz delikatnych animacji przy tworzeniu nowej notatki.",
-  //     date: "03 Maj 2026",
-  //   },
-  //   {
-  //     id: 5,
-  //     title: "Krótka notatka",
-  //     preview: "TODO: poprawić walidację formularza.",
-  //     date: "02 Maj 2026",
-  //   },
-  //   {
-  //     id: 6,
-  //     title: "Research: markdown editor",
-  //     preview:
-  //       "Porównanie rozwiązań: TipTap, Slate i Lexical. Kryteria: wydajność, wsparcie pluginów, prostota integracji.",
-  //     date: "01 Maj 2026",
-  //   },
-  //   {
-  //     id: 7,
-  //     title: "Plan sprintu",
-  //     preview:
-  //       "Priorytet 1: autoryzacja. Priorytet 2: filtrowanie notatek. Priorytet 3: paginacja i lazy loading.",
-  //     date: "30 Kwi 2026",
-  //   },
-  //   {
-  //     id: 8,
-  //     title: "API edge cases",
-  //     preview:
-  //       "Obsługa timeoutów, 401 po wygaśnięciu tokena, retry przy 5xx oraz fallback UI dla pustej odpowiedzi.",
-  //     date: "29 Kwi 2026",
-  //   },
-  //   {
-  //     id: 9,
-  //     title:
-  //       "Długi tytuł testowy sprawdzający zachowanie karty przy większej ilości tekstu",
-  //     preview:
-  //       "To jest specjalnie dłuższa treść testowa, żeby sprawdzić zawijanie linii, wysokość kart i zachowanie sekcji z akcjami na różnych szerokościach ekranu.",
-  //     date: "28 Kwi 2026",
-  //   },
-  //   {
-  //     id: 10,
-  //     title: "Notatka PL/EN",
-  //     preview:
-  //       "Sprawdzenie znaków diakrytycznych: ąćęłńóśźż oraz mixed content in English to validate typography rendering.",
-  //     date: "27 Kwi 2026",
-  //   },
-  // ];
   const { logout, token } = useAuth();
   const navigate = useNavigate();
+
   const [user, setUser] = useState({ username: "", email: "" });
   const [notes, setNotes] = useState([]);
+
   const [noteToDelete, setNoteToDelete] = useState(null);
-  const noteNameToBeDeleted = notes.find((movie) => movie.id === noteToDelete);
+  const noteNameToBeDeleted = notes.find((note) => note.id === noteToDelete);
+
+  const [handleAdd, setHandleAdd] = useState(false);
+  const [noteToAdd, setNoteToAdd] = useState({ title: "", content: "" });
 
   useEffect(() => {
     const getUser = async () => {
@@ -166,6 +99,34 @@ export function Dashboard() {
     setNoteToDelete(null);
   }
 
+  function handleCancelAdd() {
+    setHandleAdd(null);
+  }
+
+  async function noteAdd(e) {
+    e.preventDefault();
+    try {
+      const response = await api.post("notes/", noteToAdd, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNotes((prevNotes) => [...prevNotes, response.data]);
+      toast.success("Succesfully added note");
+      setNoteToAdd({ title: "", content: "" });
+      setHandleAdd(false);
+    } catch (error) {
+      if (error.response) {
+        console.error(error.response.data);
+      } else {
+        console.error(error.message);
+      }
+    }
+  }
+
+  function handleChangeForm(e) {
+    setNoteToAdd({ ...noteToAdd, [e.target.name]: e.target.value });
+    console.log(noteToAdd);
+  }
+
   return (
     <div className="dashboard-page">
       <div className="dashboard-sidebar">
@@ -190,7 +151,15 @@ export function Dashboard() {
       <main className="dashboard-main-content">
         <header className="dashboard-content-header">
           <h1>Your space.</h1>
-          <button className="dashboard-new-note-btn">+ New note</button>
+          <button
+            className="dashboard-new-note-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              setHandleAdd(true);
+            }}
+          >
+            + New note
+          </button>
         </header>
         <div className="dashboard-notes-grid">
           {notes.map((note) => (
@@ -232,6 +201,47 @@ export function Dashboard() {
               <button className="confirm-del-btn" onClick={handleConfirmDelete}>
                 Yes, delete
               </button>
+            </div>
+          </div>
+        )}
+        {handleAdd && (
+          <div className="dialog-overlay">
+            <div className="dialog-box">
+              <form className="add-note-form" onSubmit={noteAdd}>
+                <h3 className="add-note-form-title">Create new note</h3>
+                <label htmlFor="note-title">Title</label>
+                <input
+                  id="note-title"
+                  type="text"
+                  name="title"
+                  value={noteToAdd.title}
+                  onChange={handleChangeForm}
+                  placeholder="e.g. Sprint retrospective"
+                  required
+                />
+                <label htmlFor="note-content">Description</label>
+                <textarea
+                  id="note-content"
+                  type="text"
+                  name="content"
+                  value={noteToAdd.content}
+                  onChange={handleChangeForm}
+                  placeholder="Write your note..."
+                  required
+                />
+                <div className="add-note-form-actions">
+                  <button
+                    type="button"
+                    className="add-note-cancel-btn"
+                    onClick={handleCancelAdd}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="add-note-submit-btn">
+                    Add note
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}

@@ -241,6 +241,97 @@
   font-size: 0.95rem;
 }
 
+.add-note-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.add-note-form-title {
+  margin: 0 0 var(--space-1);
+  color: var(--color-text-strong);
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.add-note-form label {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--color-text-body);
+}
+
+.add-note-form input,
+.add-note-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(21, 42, 37, 0.14);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-white);
+  color: var(--color-text-body);
+  font-size: 0.95rem;
+  font-family: inherit;
+  padding: 0.78rem 0.9rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.add-note-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.add-note-form input::placeholder,
+.add-note-form textarea::placeholder {
+  color: rgba(84, 88, 83, 0.85);
+}
+
+.add-note-form input:focus,
+.add-note-form textarea:focus {
+  outline: none;
+  border-color: rgba(18, 41, 35, 0.3);
+  box-shadow: 0 0 0 4px rgba(18, 41, 35, 0.08);
+}
+
+.add-note-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.add-note-cancel-btn,
+.add-note-submit-btn {
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 0.65rem 1.05rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    background-color 0.2s ease;
+}
+
+.add-note-cancel-btn {
+  background-color: var(--color-surface-muted);
+  color: var(--color-text-body);
+}
+
+.add-note-submit-btn {
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.add-note-cancel-btn:hover,
+.add-note-submit-btn:hover {
+  transform: translateY(-1px);
+}
+
+.add-note-submit-btn:hover {
+  background-color: var(--color-accent-hover);
+}
+
 .dialog-actions {
   width: min(100%, 480px);
   display: flex;
@@ -309,6 +400,31 @@
 
   .dialog-box p {
     font-size: 0.86rem;
+  }
+
+  .add-note-form-title {
+    font-size: 1.05rem;
+  }
+
+  .add-note-form input,
+  .add-note-form textarea {
+    font-size: 0.88rem;
+    padding: 0.65rem 0.75rem;
+  }
+
+  .add-note-form textarea {
+    min-height: 96px;
+  }
+
+  .add-note-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .add-note-cancel-btn,
+  .add-note-submit-btn {
+    width: 100%;
+    padding: 0.58rem 0.9rem;
+    font-size: 0.84rem;
   }
 }
 
