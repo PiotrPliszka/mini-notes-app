@@ -4,9 +4,19 @@ import { NavLink, Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import icon from "../assets/house.svg";
 import "./RegisterPage.css";
+import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  const [error, setError] = useState({
+    usernameError: "",
+    emailError: "",
+    passwordError: "",
+    confirm_passwordError: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [user, setUser] = useState({
     username: "",
@@ -19,16 +29,42 @@ export function RegisterPage() {
   }
   async function handleSubmit(e) {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError({
+      usernameError: "",
+      emailError: "",
+      passwordError: "",
+      confirm_passwordError: "",
+    });
+    if (user.password !== user.confirm_password) {
+      setError({
+        usernameError: "",
+        emailError: "",
+        passwordError: "Password don't match",
+        confirm_passwordError: "Password don't match",
+      });
+      setIsSubmitting(false);
+      return;
+    }
     try {
-      const response = await api.post("auth/register/", user);
-      console.log("Sukces", response.data);
-      navigate("/dashboard");
+      await api.post("auth/register/", user);
+      toast.success("Account created");
+      navigate("/login");
     } catch (error) {
       if (error.response) {
+        const backendErrors = error.response.data;
         console.error("Error data: ", error.response.data);
+        setError({
+          usernameError: backendErrors.username[0] || "",
+          emailError: backendErrors.email[0] || "",
+          passwordError: backendErrors.password[0] || "",
+          confirm_passwordError: backendErrors.confirm_password[0] || "",
+        });
       } else {
         console.error("Error message: ", error.message);
       }
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -70,6 +106,9 @@ export function RegisterPage() {
             value={user.username}
             onChange={handleChange}
           />
+          {error.usernameError && (
+            <p className="backend-error">{error.usernameError}</p>
+          )}
           <label>Email</label>
           <input
             type="email"
@@ -77,6 +116,9 @@ export function RegisterPage() {
             value={user.email}
             onChange={handleChange}
           />
+          {error.emailError && (
+            <p className="backend-error">{error.emailError}</p>
+          )}
           <label>Password</label>
           <input
             type="password"
@@ -84,6 +126,9 @@ export function RegisterPage() {
             value={user.password}
             onChange={handleChange}
           />
+          {error.passwordError && (
+            <p className="backend-error">{error.passwordError}</p>
+          )}
           <label>Confrim Password</label>
           <input
             type="password"
@@ -91,7 +136,26 @@ export function RegisterPage() {
             value={user.confirm_password}
             onChange={handleChange}
           />
-          <button type="submit">Start Writing</button>
+          {error.confirm_passwordError && (
+            <p className="backend-error">{error.confirm_passwordError}</p>
+          )}
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <motion.span
+                className="submit-loader"
+                animate={{ rotate: 360 }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 1,
+                  ease: "linear",
+                }}
+              >
+                <Loader2 size={20} />
+              </motion.span>
+            ) : (
+              "Create"
+            )}
+          </button>
         </form>
       </div>
       <div className="note-div">
