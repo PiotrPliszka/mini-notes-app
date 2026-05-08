@@ -55,10 +55,10 @@ export function RegisterPage() {
         const backendErrors = error.response.data;
         console.error("Error data: ", error.response.data);
         setError({
-          usernameError: backendErrors.username[0] || "",
-          emailError: backendErrors.email[0] || "",
-          passwordError: backendErrors.password[0] || "",
-          confirm_passwordError: backendErrors.confirm_password[0] || "",
+          usernameError: backendErrors.username?.[0] || "",
+          emailError: backendErrors.email?.[0] || "",
+          passwordError: backendErrors.password?.[0] || "",
+          confirm_passwordError: backendErrors.confirm_password?.[0] || "",
         });
       } else {
         console.error("Error message: ", error.message);
