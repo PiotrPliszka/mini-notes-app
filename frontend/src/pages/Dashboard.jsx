@@ -19,6 +19,13 @@ export function Dashboard() {
   const [handleAdd, setHandleAdd] = useState(false);
   const [noteToAdd, setNoteToAdd] = useState({ title: "", content: "" });
 
+  const [handleNoteEdit, setHandleNoteEdit] = useState(false);
+  const [noteToEdit, setNoteToEdit] = useState({
+    id: "",
+    title: "",
+    content: "",
+  });
+
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -122,9 +129,59 @@ export function Dashboard() {
     }
   }
 
-  function handleChangeForm(e) {
+  function handleChangeAddForm(e) {
     setNoteToAdd({ ...noteToAdd, [e.target.name]: e.target.value });
-    console.log(noteToAdd);
+  }
+
+  function handleChangeEditForm(e) {
+    setNoteToEdit({ ...noteToEdit, [e.target.name]: e.target.value });
+  }
+
+  function handleCancelEdit() {
+    setHandleNoteEdit(false);
+    setNoteToEdit({ title: "", content: "" });
+  }
+
+  async function fetchDataNote(idNote) {
+    try {
+      const response = await api.get(`notes/${idNote}/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNoteToEdit({
+        id: idNote,
+        title: response.data.title,
+        content: response.data.content,
+      });
+      console.log(response.data);
+    } catch (error) {
+      if (error.response) {
+        console.error("Error data: ", error.response.data);
+      } else {
+        console.error("Error message: ", error.message);
+      }
+    }
+  }
+
+  async function editNoteData() {
+    try {
+      const id = noteToEdit.id;
+      console.log(id);
+      const response = await api.put(`notes/${id}/`, noteToEdit, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("Success: ", response.data);
+      setNotes((prevNotes) =>
+        prevNotes.map((note) => (note.id === id ? response.data : note)),
+      );
+      setHandleNoteEdit(false);
+      toast.success("Successfully updated note");
+    } catch (error) {
+      if (error.response) {
+        console.error(error.response.data);
+      } else {
+        console.error(error.message);
+      }
+    }
   }
 
   return (
@@ -171,7 +228,16 @@ export function Dashboard() {
                   {formatDate(note.created_at)}
                 </span>
                 <div className="dashboard-note-actions">
-                  <button className="dashboard-note-action-btn">Edit</button>
+                  <button
+                    className="dashboard-note-action-btn"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setHandleNoteEdit(true);
+                      fetchDataNote(note.id);
+                    }}
+                  >
+                    Edit
+                  </button>
                   <button
                     className="dashboard-note-action-btn"
                     onClick={(e) => {
@@ -215,7 +281,7 @@ export function Dashboard() {
                   type="text"
                   name="title"
                   value={noteToAdd.title}
-                  onChange={handleChangeForm}
+                  onChange={handleChangeAddForm}
                   placeholder="e.g. Sprint retrospective"
                   required
                 />
@@ -225,7 +291,7 @@ export function Dashboard() {
                   type="text"
                   name="content"
                   value={noteToAdd.content}
-                  onChange={handleChangeForm}
+                  onChange={handleChangeAddForm}
                   placeholder="Write your note..."
                   required
                 />
@@ -239,6 +305,54 @@ export function Dashboard() {
                   </button>
                   <button type="submit" className="add-note-submit-btn">
                     Add note
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {handleNoteEdit && (
+          <div className="dialog-overlay">
+            <div className="dialog-box">
+              <form
+                className="add-note-form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  editNoteData();
+                }}
+              >
+                <h3 className="add-note-form-title">Edit note</h3>
+                <label htmlFor="note-title">Title</label>
+                <input
+                  id="note-title"
+                  type="text"
+                  name="title"
+                  value={noteToEdit.title}
+                  onChange={handleChangeEditForm}
+                  placeholder="e.g. Sprint retrospective"
+                  required
+                />
+                <label htmlFor="note-content">Description</label>
+                <textarea
+                  id="note-content"
+                  type="text"
+                  name="content"
+                  value={noteToEdit.content}
+                  onChange={handleChangeEditForm}
+                  placeholder="Write your note..."
+                  required
+                />
+                <div className="add-note-form-actions">
+                  <button
+                    type="button"
+                    className="add-note-cancel-btn"
+                    onClick={handleCancelEdit}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="add-note-submit-btn">
+                    Edit note
                   </button>
                 </div>
               </form>
