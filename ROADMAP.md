@@ -1,73 +1,91 @@
 # Mini Notes App Roadmap
 
-Roadmapa jest zaktualizowana pod aktualny stan repo, a nie tylko pod plan poczatkowy.
+Roadmapa jest zaktualizowana pod obecny stan kodu w repo.
 
 ## 1. Cel projektu
 
-Mini Notes App ma nauczyc:
+Projekt ma nauczyc:
 - auth w praktyce
 - pracy z `Django REST Framework`
 - pracy z `React + Vite`
-- filtrowania danych po zalogowanym uzytkowniku
-- budowy pelnego CRUD od backendu do frontendu
+- budowy API i frontendu, ktore razem ogarniaja prywatne notatki usera
 
-Docelowo user:
-- zaklada konto
-- loguje sie
-- pobiera swoje dane
-- tworzy notatki
-- edytuje swoje notatki
-- usuwa swoje notatki
-- widzi tylko swoje notatki
+Docelowy flow:
+- user rejestruje konto
+- user loguje sie
+- frontend zapisuje tokeny
+- frontend pobiera `me`
+- user zarzadza tylko swoimi notatkami
 
-## 2. Stack
+## 2. Co jest zrobione
 
-Frontend:
-- `React 19`
-- `Vite`
-- `React Router`
-- `Axios`
-- `React Hot Toast`
+### Backend
 
-Backend:
-- `Django`
-- `Django REST Framework`
-- `Simple JWT`
+- skonfigurowany `Django`
+- skonfigurowany `DRF`
+- skonfigurowany `Simple JWT`
+- skonfigurowany `CORS`
+- custom `User`
+- model `Note`
+- migracje
+- `register`
+- `login`
+- `refresh`
+- `me`
+- `GET /api/notes/`
+- `POST /api/notes/`
+- `GET /api/notes/<id>/`
+- `PUT /api/notes/<id>/`
+- `DELETE /api/notes/<id>/`
+- filtrowanie notatek po `request.user`
+- przypisywanie wlasciciela notatki po stronie backendu
+- podstawowe testy auth
+- podstawowe testy notes
 
-Baza danych:
-- `SQLite`
+### Frontend
 
-Tooling:
-- `Docker`
-- `Docker Compose`
-- `ESLint`
+- routing
+- `HomePage`
+- `RegisterPage`
+- `LoginPage`
+- `Dashboard`
+- `AuthContext`
+- `ProtectedRoute`
+- axios client
+- logowanie z zapisem `access` i `refresh`
+- pobieranie usera przez `me`
+- pobieranie listy notatek
+- dodawanie notatek
+- edycja notatek
+- usuwanie notatek
+- podstawowy system stylow i design tokens
 
 ## 3. Aktualny stan projektu
 
-To jest stan faktyczny kodu na teraz.
+Backend:
+- funkcjonalnie jest bardzo blisko domkniecia MVP
+- wymaga jeszcze potwierdzenia jednym pelnym runem testow
 
-Backend jest juz w bardzo duzej czesci gotowy:
-- projekt `Django` z katalogiem `config`
-- aplikacje `users` i `notes`
-- custom `User` oparty o `AbstractUser`
-- model `Note`
-- migracje
-- konfiguracja `DRF`
-- konfiguracja `JWT`
-- konfiguracja `CORS`
-- endpoint `register`
-- endpoint `login`
-- endpoint `refresh`
-- endpoint `me`
-- lista notatek zalogowanego usera
-- tworzenie notatki przypisanej do `request.user`
-- pobieranie, edycja i usuwanie tylko swoich notatek
-- testy auth w `users/tests.py`
-- testy notes w `notes/tests.py`
+Frontend:
+- auth i dashboard juz dzialaja w podstawowej wersji
+- nadal sa rzeczy do dopracowania w UX i flow
 
-Frontend jest jeszcze praktycznie nieruszony od strony logiki auth i notes.
+## 4. Aktualne modele
 
-## 4. Aktualne endpointy backendowe
+### User
+
+- dziedziczy po `AbstractUser`
+- `email` jest unikalny
+
+### Note
+
+- `title`
+- `content`
+- `user`
+- `created_at`
+- `updated_at`
+
+## 5. Aktualne endpointy
 
 Auth:
 - `POST /api/auth/register/`
@@ -82,82 +100,9 @@ Notes:
 - `PUT /api/notes/<id>/`
 - `DELETE /api/notes/<id>/`
 
-## 5. Aktualne modele
+## 6. Aktualne testy backendu
 
-### User
-
-Model:
-- dziedziczy po `AbstractUser`
-- `email` jest unikalny
-
-W praktyce masz:
-- `id`
-- `username`
-- `email`
-- `password`
-- `first_name`
-- `last_name`
-- pola systemowe Django auth
-
-### Note
-
-Pola:
-- `id`
-- `title`
-- `content`
-- `user`
-- `created_at`
-- `updated_at`
-
-Relacja:
-- jeden user ma wiele notatek
-- jedna notatka nalezy do jednego usera
-
-## 6. Aktualne serializery
-
-Users:
-- `RegisterSerializer`
-- `UserSerializer`
-
-Notes:
-- `NoteSerializer`
-
-Najwazniejsza zasada, ktora juz przerobilismy:
-- serializer nie ma wystawiac wszystkiego z modelu
-- serializer ma byc dopasowany do konkretnego use case
-
-## 7. Aktualne widoki
-
-Users:
-- `UserCreateView`
-- `UserMeView`
-- gotowe widoki JWT z `Simple JWT`
-
-Notes:
-- `NoteListCreateView`
-- `NoteDetailView`
-
-Wazne:
-- notatki sa filtrowane po `self.request.user`
-- przy tworzeniu notatki backend ustawia `user=self.request.user`
-
-## 8. Co jest juz ogarniete koncepcyjnie
-
-Masz juz ogarniete:
-- po co jest `RegisterSerializer`
-- po co jest `UserSerializer`
-- po co jest `NoteSerializer`
-- roznice miedzy `create`, `validate`, `validate_<field>`
-- po co jest `me`
-- po co jest `refresh`
-- dlaczego `confirm_password` jest tylko w serializerze
-- dlaczego test jednego endpointu nie powinien zalezec od innego endpointu, jesli nie musi
-
-## 9. Backend testy i stan domkniecia
-
-Na ten moment backend ma juz przygotowane podstawowe testy automatyczne.
-
-### Auth tests
+### Users tests
 
 Masz juz napisane:
 - `test_create_account`
@@ -171,7 +116,7 @@ Masz juz napisane:
 - lista notatek wymaga auth
 - tworzenie notatki wymaga auth
 - user widzi tylko swoje notatki
-- tworzenie notatki przypisuje `request.user`
+- notatka tworzy sie z `request.user`
 - user moze pobrac swoja notatke
 - user nie moze pobrac cudzej notatki
 - user moze edytowac swoja notatke
@@ -179,79 +124,53 @@ Masz juz napisane:
 - user moze usunac swoja notatke
 - user nie moze usunac cudzej notatki
 
-Co jeszcze mozna dopracowac:
-- uruchomic pelny `manage.py test`
-- ewentualnie dodac testy walidacji, np. dla zbyt krotkiego `title`
-- ewentualnie lekko posprzatac pliki testowe
+Najblizszy krok backendowy:
+- odpalic `python manage.py test`
 
-## 10. Jak myslec o testach
+## 7. Co jest jeszcze do dopracowania
 
-Najwazniejsza zasada:
-- test ma sprawdzac jedna rzecz
+### Backend
 
-Przyklad:
-- `test_create_account` testuje endpoint rejestracji
-- `test_login` testuje endpoint logowania
-- `test_me` testuje endpoint `me`
+- uruchomic pelny test suite
+- ewentualnie dodac kilka testow walidacji
+- ewentualnie lekko posprzatac importy i drobiazgi
 
-To znaczy:
-- jesli testujesz `login`, user moze byc przygotowany bezposrednio w bazie przez `create_user(...)`
-- nie musisz w tescie `login` robic calego flow `register`
+### Frontend auth
 
-Najprostszy model myslenia:
-- to, co jest przedmiotem testu, odpalasz przez endpoint
-- to, co jest tylko setupem, mozesz przygotowac w bazie
+- dopracowac flow po rejestracji
+- zdecydowac, czy po rejestracji user ma byc od razu logowany
+- dodac lepsze komunikaty bledow i sukcesu
+- ogarnac lepszy stan ladowania formularzy
 
-## 11. Co dalej po backendzie
+### Frontend notes
 
-Po backendzie:
+- dopracowac UX dashboardu
+- dodac lepsze empty states
+- dodac lepsze error states
+- rozwazyc bardziej modularny podzial komponentow
 
-1. frontend auth
-- strona `Register`
-- strona `Login`
-- zapis tokenow
-- pobieranie `me`
-- protected routes
+### Token flow
 
-2. frontend notes
-- lista notatek
-- dodawanie notatek
-- edycja notatek
-- usuwanie notatek
+- przemyslec automatyczny `refresh` tokena po stronie frontu
+- przemyslec zachowanie po wygasnieciu `access tokena`
 
-3. UX
-- loading state
-- error state
-- toasty
-- puste stany
+## 8. Najblizszy sensowny plan
 
-## 12. Frontend routes do zrobienia
-
-Planowany minimalny zestaw:
-- `/`
-- `/register`
-- `/login`
-- `/dashboard`
-- `/notes/:id/edit`
-
-## 13. Najblizszy sensowny plan
-
-Najlepsza kolejnosc od teraz:
+Najbardziej sensowna kolejnosc od teraz:
 
 1. uruchomic pelny backend test suite
-2. upewnic sie, ze auth i notes sa stabilne
-3. przejsc do frontendu auth
-4. przejsc do frontendu notes
-5. dopracowac UX
+2. poprawic ewentualne bledy z test runa
+3. dopracowac frontend auth
+4. dopracowac dashboard i notatki
+5. domknac UX
+6. przygotowac deployment
 
-## 14. Aktualna checklista
+## 9. Checklista
 
 - [x] wybrac stack
-- [x] postawic backend
-- [x] skonfigurowac `Django`
-- [x] skonfigurowac `DRF`
+- [x] skonfigurowac backend
+- [x] skonfigurowac frontend
 - [x] skonfigurowac `JWT`
-- [x] skonfigurowac `CORS`
 - [x] stworzyc custom `User`
 - [x] stworzyc model `Note`
 - [x] zrobic migracje
@@ -259,36 +178,28 @@ Najlepsza kolejnosc od teraz:
 - [x] zrobic `login`
 - [x] zrobic `refresh`
 - [x] zrobic `me`
-- [x] zrobic `GET /api/notes/`
-- [x] zrobic `POST /api/notes/`
-- [x] zrobic `GET /api/notes/<id>/`
-- [x] zrobic `PUT /api/notes/<id>/`
-- [x] zrobic `DELETE /api/notes/<id>/`
-- [x] sprawdzic backend recznie przez Thunder Client
-- [x] napisac podstawowe testy automatyczne auth
-- [x] napisac podstawowe testy automatyczne notes
-- [ ] uruchomic pelny backend test suite i potwierdzic wszystko razem
-- [ ] zaczac frontend auth
-- [ ] zrobic frontend notes
-- [ ] dopracowac UX
+- [x] zrobic CRUD notatek
+- [x] zabezpieczyc notatki po userze
+- [x] sprawdzic endpointy recznie
+- [x] napisac podstawowe testy auth
+- [x] napisac podstawowe testy notes
+- [x] zrobic frontend auth pages
+- [x] zrobic `AuthContext`
+- [x] zrobic `ProtectedRoute`
+- [x] zrobic podstawowy dashboard
+- [x] podlaczyc notes do dashboardu
+- [ ] odpalic pelny backend test suite
+- [ ] dopracowac auth UX
+- [ ] dopracowac notes UX
+- [ ] ogarnac automatyczny refresh tokena albo jasny fallback
 - [ ] wdrozyc aplikacje
 
-## 15. Definition of done
+## 10. Definition of done
 
 Projekt bedzie sensownie domkniety, kiedy:
 - backend przejdzie testy reczne i automatyczne
-- frontend pozwoli sie zarejestrowac i zalogowac
-- frontend bedzie pokazywal dane z `me`
-- user zobaczy tylko swoje notatki
-- user bedzie mogl tworzyc, edytowac i usuwac swoje notatki z UI
-- flow auth bedzie dzialal po odswiezeniu strony
-
-## 16. Najwazniejsza rzecz na teraz
-
-Na ten moment nie potrzebujesz juz rozbudowywac backendu o nowe ficzery.
-
-Najbardziej sensowny krok:
-- potwierdzic caly backend jednym pelnym runem testow
-- potem przejsc do frontendu auth
-
-To zamknie backend na sensownym poziomie i da Ci mocny fundament pod frontend.
+- frontend pozwoli sie zarejestrowac i zalogowac bez chaosu
+- frontend bedzie poprawnie czytal `me`
+- user bedzie widzial tylko swoje notatki
+- user bedzie mogl tworzyc, edytowac i usuwac notatki z UI
+- token flow bedzie przewidywalny po odswiezeniu strony
