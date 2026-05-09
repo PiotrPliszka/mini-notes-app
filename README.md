@@ -83,13 +83,29 @@ Notes:
 
 ## Screenshots
 
-Home
+Landing page
 
-![Home Page](./frontend/src/assets/HomePage.png)
+![Landing Page](./docs/StartingPage.png)
 
-Auth
+Register form
 
-![Auth Page](./frontend/src/assets/LoginRegister.png)
+![Register Form](./docs/RegisterForm.png)
+
+Login form
+
+![Login Form](./docs/LogInForm.png)
+
+Dashboard
+
+![Dashboard](./docs/DashBoard.png)
+
+Add note flow
+
+![Add Note](./docs/AddFrom.png)
+
+Edit note flow
+
+![Edit Note](./docs/EditForm.png)
 
 ## Project Structure
 
