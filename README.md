@@ -1,5 +1,12 @@
 # Mini Notes App
 
+![React](https://img.shields.io/badge/React-19-20232A?logo=react)
+![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
+![Django](https://img.shields.io/badge/Django-6-092E20?logo=django)
+![DRF](https://img.shields.io/badge/DRF-API-red)
+![JWT](https://img.shields.io/badge/Auth-JWT-black)
+![Status](https://img.shields.io/badge/Status-In%20Progress-c7a96b)
+
 Full-stack notes application built to practice authentication, protected API access, and user-scoped CRUD flows.
 
 This project focuses on a simple idea:
@@ -65,6 +72,18 @@ This repository is less about business complexity and more about solid applicati
 - basic automated API test coverage
 
 It is meant to demonstrate practical full-stack thinking, not just isolated UI work.
+
+## What I Learned
+
+This project helped me practice and better understand:
+
+- building JWT authentication with Django REST Framework
+- designing serializers per use case instead of exposing full models
+- securing resources by filtering data through the authenticated user
+- structuring a React frontend around auth state and protected routes
+- handling backend validation errors and surfacing them in the UI
+- writing automated API tests for auth and CRUD flows
+- thinking about the difference between a working MVP and a safer production-ready setup
 
 ## API Overview
 
