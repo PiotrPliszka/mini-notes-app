@@ -191,9 +191,3 @@ Planned polish:
 - improved error handling
 - stronger token refresh flow on the frontend
 - deployment-focused configuration
-
-## Documentation
-
-Additional project notes:
-- [Project Overview](./PROJECT_OVERVIEW.md)
-- [Roadmap](./ROADMAP.md)
