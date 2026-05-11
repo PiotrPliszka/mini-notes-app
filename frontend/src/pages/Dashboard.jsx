@@ -8,6 +8,8 @@ import toast from "react-hot-toast";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { NoteSkeleton } from "../components/NoteSkeleton";
+import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 
 export function Dashboard() {
   const { logout, token } = useAuth();
@@ -31,6 +33,7 @@ export function Dashboard() {
 
   const [isUserLoading, setUserLoading] = useState(true);
   const [isNotesLoading, setIsNotesLoading] = useState(true);
+  const [isAddingNote, setIsAddingNote] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -122,6 +125,7 @@ export function Dashboard() {
 
   async function noteAdd(e) {
     e.preventDefault();
+    setIsAddingNote(true);
     try {
       const response = await api.post("notes/", noteToAdd, {
         headers: { Authorization: `Bearer ${token}` },
@@ -136,6 +140,8 @@ export function Dashboard() {
       } else {
         console.error(error.message);
       }
+    } finally {
+      setIsAddingNote(false);
     }
   }
 
@@ -327,8 +333,26 @@ export function Dashboard() {
                   >
                     Cancel
                   </button>
-                  <button type="submit" className="add-note-submit-btn">
-                    Add note
+                  <button
+                    type="submit"
+                    className="add-note-submit-btn"
+                    disabled={isAddingNote}
+                  >
+                    {isAddingNote ? (
+                      <motion.span
+                        className="submit-loader"
+                        animate={{ rotate: 360 }}
+                        transition={{
+                          repeat: Infinity,
+                          duration: 1,
+                          ease: "linear",
+                        }}
+                      >
+                        <Loader2 size={20} />
+                      </motion.span>
+                    ) : (
+                      "Add note"
+                    )}
                   </button>
                 </div>
               </form>
