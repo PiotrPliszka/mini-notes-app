@@ -299,6 +299,33 @@
   gap: var(--space-2);
   margin-top: var(--space-1);
 }
+.empty-note-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 4rem 2rem;
+  border-radius: 20px;
+  border: 2px dashed rgba(21, 42, 37, 0.12);
+  background-color: var(--color-surface-white);
+  text-align: center;
+}
+
+.empty-note-state::before {
+  content: "🗒️";
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.empty-note-state h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  letter-spacing: -0.01em;
+}
 
 .add-note-cancel-btn,
 .add-note-submit-btn {

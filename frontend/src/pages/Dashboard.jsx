@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 import { formatDate } from "../components/FormatDate";
 import toast from "react-hot-toast";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export function Dashboard() {
   const { logout, token } = useAuth();
@@ -26,6 +28,8 @@ export function Dashboard() {
     content: "",
   });
 
+  const [isUserLoading, setUserLoading] = useState(true);
+
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -45,6 +49,8 @@ export function Dashboard() {
         } else {
           console.error("Error message", error.message);
         }
+      } finally {
+        setUserLoading(false);
       }
     };
     getUser();
@@ -198,7 +204,11 @@ export function Dashboard() {
         </nav>
         <div className="dashboard-sidebar-footer">
           <div className="dashboard-user-info">
-            {user.username} | {user.email}
+            {isUserLoading ? (
+              <Skeleton width="100%" />
+            ) : (
+              `${user.username} | ${user.email}`
+            )}
           </div>
           <button className="dashboard-logout-btn" onClick={handleLogout}>
             Sign out
@@ -219,6 +229,11 @@ export function Dashboard() {
           </button>
         </header>
         <div className="dashboard-notes-grid">
+          {notes.length === 0 && (
+            <article className="empty-note-state">
+              <h1>Add Some Notes B)</h1>
+            </article>
+          )}
           {notes.map((note) => (
             <article className="dashboard-note-card" key={note.id}>
               <h2 className="dashboard-note-title">{note.title}</h2>
