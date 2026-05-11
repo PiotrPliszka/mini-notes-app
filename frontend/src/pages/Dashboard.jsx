@@ -34,6 +34,7 @@ export function Dashboard() {
   const [isUserLoading, setUserLoading] = useState(true);
   const [isNotesLoading, setIsNotesLoading] = useState(true);
   const [isAddingNote, setIsAddingNote] = useState(false);
+  const [isDeletingNote, setIsDeletingNote] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -90,6 +91,7 @@ export function Dashboard() {
   }
 
   async function noteDelete(noteId) {
+    setIsDeletingNote(true);
     try {
       const response = await api.delete(`notes/${noteId}/`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -105,6 +107,7 @@ export function Dashboard() {
       }
     } finally {
       toast.success("Succesfully deleted");
+      setIsDeletingNote(false);
     }
   }
 
@@ -294,8 +297,26 @@ export function Dashboard() {
               <button className="cancel-btn" onClick={handleCancelDelete}>
                 Cancel
               </button>
-              <button className="confirm-del-btn" onClick={handleConfirmDelete}>
-                Yes, delete
+              <button
+                className="confirm-del-btn"
+                onClick={handleConfirmDelete}
+                disabled={isDeletingNote}
+              >
+                {isDeletingNote ? (
+                  <motion.span
+                    className="submit-loader"
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 1,
+                      ease: "linear",
+                    }}
+                  >
+                    <Loader2 size={20} />
+                  </motion.span>
+                ) : (
+                  "Yes, delete"
+                )}
               </button>
             </div>
           </div>
