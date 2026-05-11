@@ -7,6 +7,7 @@ import { formatDate } from "../components/FormatDate";
 import toast from "react-hot-toast";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { NoteSkeleton } from "../components/NoteSkeleton";
 
 export function Dashboard() {
   const { logout, token } = useAuth();
@@ -29,6 +30,7 @@ export function Dashboard() {
   });
 
   const [isUserLoading, setUserLoading] = useState(true);
+  const [isNotesLoading, setIsNotesLoading] = useState(true);
 
   useEffect(() => {
     const getUser = async () => {
@@ -70,6 +72,8 @@ export function Dashboard() {
         } else {
           console.error("Error message: ", error.message);
         }
+      } finally {
+        setIsNotesLoading(false);
       }
     };
     if (token) {
@@ -229,43 +233,48 @@ export function Dashboard() {
           </button>
         </header>
         <div className="dashboard-notes-grid">
-          {notes.length === 0 && (
+          {isNotesLoading ? (
+            Array(6)
+              .fill(0)
+              .map((_, i) => <NoteSkeleton key={i} />)
+          ) : notes.length === 0 ? (
             <article className="empty-note-state">
               <h1>Add Some Notes B)</h1>
             </article>
+          ) : (
+            notes.map((note) => (
+              <article className="dashboard-note-card" key={note.id}>
+                <h2 className="dashboard-note-title">{note.title}</h2>
+                <p className="dashboard-note-preview">{note.content}</p>
+                <footer className="dashboard-note-footer">
+                  <span className="dashboard-note-date">
+                    {formatDate(note.created_at)}
+                  </span>
+                  <div className="dashboard-note-actions">
+                    <button
+                      className="dashboard-note-action-btn"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setHandleNoteEdit(true);
+                        fetchDataNote(note.id);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="dashboard-note-action-btn"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setNoteToDelete(note.id);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </footer>
+              </article>
+            ))
           )}
-          {notes.map((note) => (
-            <article className="dashboard-note-card" key={note.id}>
-              <h2 className="dashboard-note-title">{note.title}</h2>
-              <p className="dashboard-note-preview">{note.content}</p>
-              <footer className="dashboard-note-footer">
-                <span className="dashboard-note-date">
-                  {formatDate(note.created_at)}
-                </span>
-                <div className="dashboard-note-actions">
-                  <button
-                    className="dashboard-note-action-btn"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setHandleNoteEdit(true);
-                      fetchDataNote(note.id);
-                    }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="dashboard-note-action-btn"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setNoteToDelete(note.id);
-                    }}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </footer>
-            </article>
-          ))}
         </div>
         {noteToDelete && (
           <div className="dialog-overlay">
