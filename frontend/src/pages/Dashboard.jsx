@@ -40,9 +40,7 @@ export function Dashboard() {
     const getUser = async () => {
       try {
         if (!token) return;
-        const response = await api.get("auth/me/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await api.get("auth/me/");
         if (response.data) {
           setUser({
             username: response.data.username,
@@ -65,9 +63,7 @@ export function Dashboard() {
   useEffect(() => {
     const getNotes = async () => {
       try {
-        const response = await api.get("notes/", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await api.get("notes/");
         console.log(response.data);
         setNotes(response.data);
       } catch (error) {
@@ -93,9 +89,7 @@ export function Dashboard() {
   async function noteDelete(noteId) {
     setIsDeletingNote(true);
     try {
-      const response = await api.delete(`notes/${noteId}/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.delete(`notes/${noteId}/`);
 
       console.log("Sukces: ", response.data);
       setNotes((prevNotes) => prevNotes.filter((note) => note.id !== noteId));
@@ -130,9 +124,7 @@ export function Dashboard() {
     e.preventDefault();
     setIsAddingNote(true);
     try {
-      const response = await api.post("notes/", noteToAdd, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.post("notes/", noteToAdd);
       setNotes((prevNotes) => [...prevNotes, response.data]);
       toast.success("Succesfully added note");
       setNoteToAdd({ title: "", content: "" });
@@ -163,9 +155,7 @@ export function Dashboard() {
 
   async function fetchDataNote(idNote) {
     try {
-      const response = await api.get(`notes/${idNote}/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.get(`notes/${idNote}/`);
       setNoteToEdit({
         id: idNote,
         title: response.data.title,
@@ -185,9 +175,7 @@ export function Dashboard() {
     try {
       const id = noteToEdit.id;
       console.log(id);
-      const response = await api.put(`notes/${id}/`, noteToEdit, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.put(`notes/${id}/`, noteToEdit);
       console.log("Success: ", response.data);
       setNotes((prevNotes) =>
         prevNotes.map((note) => (note.id === id ? response.data : note)),

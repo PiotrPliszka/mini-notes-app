@@ -1,4 +1,5 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
+import { setUpdateTokenCallback } from "../api/axios";
 
 const AuthContext = createContext();
 
@@ -18,8 +19,18 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("refresh");
     setToken(null);
   }
+
+  function updateToken(newToken) {
+    localStorage.setItem("access", newToken);
+    setToken(newToken);
+  }
+
+  useEffect(() => {
+    setUpdateTokenCallback(updateToken);
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ token, login, logout, updateToken }}>
       {children}
     </AuthContext.Provider>
   );
