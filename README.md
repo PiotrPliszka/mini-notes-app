@@ -5,95 +5,57 @@
 ![Django](https://img.shields.io/badge/Django-6-092E20?logo=django)
 ![DRF](https://img.shields.io/badge/DRF-API-red)
 ![JWT](https://img.shields.io/badge/Auth-JWT-black)
-![Status](https://img.shields.io/badge/Status-In%20Progress-c7a96b)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 
-Full-stack notes application built to practice authentication, protected API access, and user-scoped CRUD flows.
+A small full-stack notes app built to practice:
 
-This project focuses on a simple idea:
+- JWT auth (register/login/refresh)
+- protected API + user-scoped CRUD
+- a calm React UI
+- deployment-ready containers (Django + Gunicorn, Nginx, Postgres)
 
-- users create an account
-- users log in with JWT
-- users manage personal notes
-- users can only see and modify their own data
-
-It was built as a portfolio-style learning project with a strong focus on clean backend fundamentals and a calm, intentional frontend UI.
+Core rule: every user only sees and edits their own notes.
 
 ## Tech Stack
 
-Frontend:
+**Frontend**
 - React 19
 - Vite
 - React Router
 - Axios
 - React Hot Toast
 
-Backend:
+**Backend**
 - Django
 - Django REST Framework
 - Simple JWT
 
-Database:
-- SQLite
+**Database**
+- PostgreSQL (Docker / Railway)
+- SQLite (optional legacy/dev mode to export old local data)
 
-Tooling:
-- Docker
-- Docker Compose
+**Tooling**
+- Docker / Docker Compose
 - ESLint
 
 ## Features
 
-Implemented:
-- user registration
-- JWT login
-- token refresh endpoint
-- current user endpoint (`me`)
-- protected dashboard route
-- note list
-- create note
-- edit note
-- delete note
-- user-specific note access control
-- automated backend API tests
+- User registration
+- JWT login + refresh
+- Current user endpoint (`me`)
+- Notes CRUD (list/create/edit/delete)
+- Ownership checks (users can only access their own notes)
+- Basic backend API tests
 
-Current frontend status:
-- authentication pages are implemented
-- dashboard is connected to the backend
-- notes can be fetched, created, edited, and deleted from the UI
+## API Endpoints
 
-## Why This Project Matters
-
-This repository is less about business complexity and more about solid application structure:
-
-- custom user model in Django
-- DRF serializers built per use case
-- JWT-based auth flow
-- ownership checks on note resources
-- protected frontend routes
-- basic automated API test coverage
-
-It is meant to demonstrate practical full-stack thinking, not just isolated UI work.
-
-## What I Learned
-
-This project helped me practice and better understand:
-
-- building JWT authentication with Django REST Framework
-- designing serializers per use case instead of exposing full models
-- securing resources by filtering data through the authenticated user
-- structuring a React frontend around auth state and protected routes
-- handling backend validation errors and surfacing them in the UI
-- writing automated API tests for auth and CRUD flows
-- thinking about the difference between a working MVP and a safer production-ready setup
-
-## API Overview
-
-Auth:
+**Auth**
 - `POST /api/auth/register/`
 - `POST /api/auth/login/`
 - `POST /api/auth/refresh/`
 - `GET /api/auth/me/`
 
-Notes:
+**Notes**
 - `GET /api/notes/`
 - `POST /api/notes/`
 - `GET /api/notes/<id>/`
@@ -102,45 +64,66 @@ Notes:
 
 ## Screenshots
 
-Landing page
-
+Landing page  
 ![Landing Page](./docs/StartingPage.png)
 
-Register form
-
+Register form  
 ![Register Form](./docs/RegisterForm.png)
 
-Login form
-
+Login form  
 ![Login Form](./docs/LogInForm.png)
 
-Dashboard
-
+Dashboard  
 ![Dashboard](./docs/DashBoard.png)
 
-Add note flow
-
+Add note flow  
 ![Add Note](./docs/AddFrom.png)
 
-Edit note flow
-
+Edit note flow  
 ![Edit Note](./docs/EditForm.png)
 
 ## Project Structure
 
 ```text
 mini-notes-app/
-├─ backend/        # Django + DRF API
-├─ frontend/       # React + Vite app
+├─ backend/                # Django + DRF API
+├─ frontend/               # React + Vite app (served by nginx)
+├─ scripts/                # local helper scripts
 ├─ docker-compose.yml
-├─ README.md
-├─ PROJECT_OVERVIEW.md
-└─ ROADMAP.md
+├─ .env.example
+└─ README.md
 ```
 
-## Local Setup
+## Quick Start (Local, Docker)
 
-### Backend
+Prerequisites:
+- Docker Desktop
+
+1) Create env file (repo root):
+
+```bash
+cp .env.example .env
+```
+
+2) Start everything:
+
+```bash
+docker compose up --build
+```
+
+3) Open:
+- Frontend: http://localhost/
+- API: http://localhost/api/
+
+Notes:
+- Frontend proxies `/api/*` → backend (private Docker network).
+- Backend runs migrations + `collectstatic` automatically on container start.
+
+## Local Setup (No Docker)
+
+Docker is recommended for parity with deploy, but you can run services separately.
+
+### Backend (API)
 
 ```bash
 cd backend
@@ -151,7 +134,7 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-### Frontend
+### Frontend (UI)
 
 ```bash
 cd frontend
@@ -159,35 +142,84 @@ npm install
 npm run dev
 ```
 
-### Docker
-
-```bash
-docker compose up --build
-```
+When running without Docker, set:
+- `frontend/.env` → `VITE_API_URL=http://localhost:8000/api/`
 
 ## Testing
 
-Backend API tests are written for:
-- auth registration
-- auth login
-- auth refresh
-- current user endpoint
-- note permissions
-- note CRUD flows
-
-Run:
+Run backend tests:
 
 ```bash
 cd backend
 python manage.py test
 ```
 
-## Current Status
+## Deploy on Railway
 
-The application is already functional as an MVP and suitable as a portfolio project, but still in active refinement.
+Recommended layout (1 project, 3 services):
+- `postgres` (Railway managed DB)
+- `backend` (private service, Django/Gunicorn)
+- `frontend` (public service, Nginx static + `/api` proxy)
 
-Planned polish:
-- smoother auth UX
-- improved error handling
-- stronger token refresh flow on the frontend
-- deployment-focused configuration
+### 1) Create services
+
+1. Create a Railway project
+2. Add a Postgres database (Railway “Database → Postgres”)
+3. Add two services from this repo:
+   - **backend**: Dockerfile path `backend/Dockerfile`
+   - **frontend**: Dockerfile path `frontend/Dockerfile`
+
+### 2) Backend variables (Railway)
+
+In `backend` → Variables:
+- `DEBUG=False`
+- `SECRET_KEY=...` (strong secret)
+- `PORT=8000`
+- `DATABASE_URL` as a **reference variable** to your Postgres `DATABASE_URL`
+- `CORS_ALLOWED_ORIGINS=https://<your-frontend-domain>`
+- (optional) `CSRF_TRUSTED_ORIGINS=https://<your-frontend-domain>`
+
+Notes:
+- The app also reads `RAILWAY_PUBLIC_DOMAIN` automatically to extend `ALLOWED_HOSTS` / `CSRF_TRUSTED_ORIGINS`.
+
+### 3) Frontend variables (Railway)
+
+In `frontend` → Variables:
+- `API_UPSTREAM=backend.railway.internal:8000`
+
+Then enable Public Networking on the frontend service and generate a domain.
+
+### 4) Migrations
+
+Backend runs the following automatically on start:
+- `python manage.py migrate`
+- `python manage.py collectstatic`
+
+## Data Migration (SQLite → Postgres)
+
+If you previously used `backend/db.sqlite3` and now run Postgres, your old notes won’t appear automatically.
+
+This repo includes a helper script that:
+- dumps data from SQLite (`USE_SQLITE=True`)
+- loads it into Postgres
+
+Run (PowerShell, Windows):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\migrate-sqlite-to-postgres.ps1
+```
+
+## Troubleshooting
+
+### 405 Method Not Allowed
+
+- `GET /api/auth/login/` returns `405` by design (login expects `POST`).
+- If you see `POST /auth/login/ 405`, your frontend is not calling `/api/...` (wrong base URL or stale cached bundle).
+
+### Common Railway issues
+
+- **App not reachable**: service must listen on `0.0.0.0:$PORT`.
+- **DisallowedHost**: add your domain to `ALLOWED_HOSTS` (handled automatically when `RAILWAY_PUBLIC_DOMAIN` is present).
+- **CORS blocked**: set `CORS_ALLOWED_ORIGINS` to your frontend domain (https).
+- **DB connection errors**: use Railway Postgres `DATABASE_URL` (reference variable) instead of Docker hostnames like `db`.
+
