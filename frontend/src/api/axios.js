@@ -7,7 +7,7 @@ export function setUpdateTokenCallback(fn) {
 }
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL ?? "/api/",
 });
 
 api.interceptors.request.use((config) => {
@@ -28,7 +28,7 @@ api.interceptors.response.use(
       try {
         const refresh = localStorage.getItem("refresh");
         const { data } = await axios.post(
-          `${import.meta.env.VITE_API_URL}auth/refresh/`,
+          `${import.meta.env.VITE_API_URL ?? "/api/"}auth/refresh/`,
           { refresh },
         );
         if (updateTokenCallback) updateTokenCallback(data.access);
